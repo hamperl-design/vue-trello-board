@@ -2,6 +2,8 @@
 import {ref} from "vue";
 import type {Column} from "@/types";
 import {nanoid} from "nanoid";
+import TrelloBoardTask from "@/modules/board/views/components/TrelloBoardTask.vue";
+import draggable from "vuedraggable";
 
 const columns = ref<Column[]>([
     {
@@ -33,16 +35,28 @@ const columns = ref<Column[]>([
 </script>
 
 <template>
-  <div class="board">
-      <div class="__column" v-for="column in columns" :key="column.id">
-          <header>
-              {{ column.title }}
-          </header>
-          <p v-for="task in column.tasks" :key="task.id">
-              {{task.title}}
-          </p>
-      </div>
-  </div>
+      <draggable
+        v-model="columns"
+        group="columns"
+        item-key="id"
+        class="board"
+      >
+          <template #item="{element: column}: {element: Column}">
+              <div class="__column">
+                  <header class="__header">
+                      {{ column.title }}
+                  </header>
+                  <TrelloBoardTask
+                      v-for="task in column.tasks"
+                      :key="task.id"
+                      :task="task"
+                  />
+                  <footer>
+                      <button class="__add-button">+ Add a Card</button>
+                  </footer>
+              </div>
+          </template>
+      </draggable>
 </template>
 
 <style lang='scss'>
@@ -58,6 +72,21 @@ const columns = ref<Column[]>([
     padding: 1rem;
     border-radius: 4px;
     min-width: 250px;
+      &:hover {
+          background-color: #646464;
+      }
+    .__header {
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+    .__add-button {
+      color: #aaaaaa;
+      border: none;
+      background-color: transparent;
+      &:hover {
+        color: #4d31b0;
+      }
+    }
   }
 }
 </style>
