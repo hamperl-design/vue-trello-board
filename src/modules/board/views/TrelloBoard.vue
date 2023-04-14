@@ -1,14 +1,14 @@
 <script lang="ts" setup="">
-import {nextTick, ref} from "vue";
+import {nextTick} from "vue";
 import type {Column, Task} from "@/types";
 import {nanoid} from "nanoid";
 import TrelloBoardTask from "@/modules/board/views/components/TrelloBoardTask.vue";
 import draggable from "vuedraggable";
 import DragHandle from "@/modules/board/views/components/DragHandle.vue";
-import {useKeyModifier} from "@vueuse/core";
+import {useKeyModifier, useLocalStorage} from "@vueuse/core";
 import NewTask from "@/modules/board/views/components/NewTask.vue";
 
-const columns = ref<Column[]>([
+const columns = useLocalStorage<Column[]>('trelloBoard', [
     {
         id: nanoid(),
         title: 'Backlog',

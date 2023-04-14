@@ -17,7 +17,7 @@ onKeyStroke("Backspace", (e: Event) => {
 </script>
 
 <template>
-  <div class="task" :title="task.createdAt.toLocaleDateString()" @focus="focused = true"
+  <div class="task" :title="new Date(task.createdAt).toLocaleDateString()" @focus="focused = true"
        @blur="focused = false" tabindex="0">
       <DragHandle />
       <span>{{task.title}}</span>
