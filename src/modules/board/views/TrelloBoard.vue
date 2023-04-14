@@ -7,53 +7,43 @@ import draggable from "vuedraggable";
 import DragHandle from "@/modules/board/views/components/DragHandle.vue";
 import {useKeyModifier, useLocalStorage} from "@vueuse/core";
 import NewTask from "@/modules/board/views/components/NewTask.vue";
+import {useBoardStore} from "@/modules/board/infrastructure/store/board.store";
 
-const columns = useLocalStorage<Column[]>('trelloBoard', [
-    {
-        id: nanoid(),
-        title: 'Backlog',
-        tasks: [
-            {
-               id: nanoid(),
-               title: 'First task',
-               createdAt: new Date()
-            },
-            {
-                id: nanoid(),
-                title: 'Second task',
-                createdAt: new Date()
-            },
-            {
-                id: nanoid(),
-                title: 'Third task',
-                createdAt: new Date()
-            }
-        ]
-    },
-    {id: nanoid(), title: 'ToDo', tasks: []},
-    {id: nanoid(), title: 'In Progress', tasks: []},
-    {id: nanoid(), title: 'Done', tasks: []},
-    {id: nanoid(), title: 'Deployed', tasks: []},
-])
+// const columns = useLocalStorage<Column[]>('trelloBoard', [
+//     {
+//         id: nanoid(),
+//         title: 'Backlog',
+//         tasks: [
+//             {
+//                id: nanoid(),
+//                title: 'First task',
+//                createdAt: new Date()
+//             },
+//             {
+//                 id: nanoid(),
+//                 title: 'Second task',
+//                 createdAt: new Date()
+//             },
+//             {
+//                 id: nanoid(),
+//                 title: 'Third task',
+//                 createdAt: new Date()
+//             }
+//         ]
+//     },
+//     {id: nanoid(), title: 'ToDo', tasks: []},
+//     {id: nanoid(), title: 'In Progress', tasks: []},
+//     {id: nanoid(), title: 'Done', tasks: []},
+//     {id: nanoid(), title: 'Deployed', tasks: []},
+// ])
 const alt = useKeyModifier('Control')
-const createColumn = () => {
-    const column: Column = {
-        id: nanoid(),
-        title: '',
-        tasks: []
-    }
-
-    columns.value.push(column)
-    nextTick(() => {
-        (document.querySelector('.__column:last-of-type .title-input') as HTMLInputElement).focus()
-    })
-}
+const boardStore = useBoardStore()
 </script>
 
 <template>
     <div class="board-wrapper">
     <draggable
-        v-model="columns"
+        v-model="boardStore.columns"
         group="columns"
         item-key="id"
         class="board"
@@ -67,7 +57,7 @@ const createColumn = () => {
                       <input
                           class="__column-input title-input"
                           @keyup.enter="($event.target as HTMLInputElement).blur()"
-                          @keydown.backspace="column.title === '' ? (columns = columns.filter(c => c.id !== column.id)) : null"
+                          @keydown.backspace="column.title === '' ? (boardStore.columns = boardStore.columns.filter(c => c.id !== column.id)) : null"
                           type="text"
                           v-model="column.title"
                       />
@@ -95,7 +85,7 @@ const createColumn = () => {
           </template>
       </draggable>
     <button
-        @click="createColumn"
+        @click="boardStore.createColumn"
         class="__create-column"
         >+ Add Another Column</button>
     </div>
