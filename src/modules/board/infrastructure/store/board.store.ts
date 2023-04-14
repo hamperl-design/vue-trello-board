@@ -1,10 +1,15 @@
 import {defineStore} from "pinia";
-import {nextTick, ref} from "vue";
+import {computed, nextTick, ref} from "vue";
 import type {Column} from "@/types";
 import {nanoid} from "nanoid";
 
 export const useBoardStore = defineStore('boardStore', () => {
     const columns = ref<Column[]>([])
+    const numberOfTasks = computed<number>(() => {
+        return columns.value.reduce((prev, cur) => {
+            return prev += cur.tasks.length
+        }, 0)
+    })
 
     async function createColumn() {
         const column: Column = {
@@ -21,6 +26,7 @@ export const useBoardStore = defineStore('boardStore', () => {
 
     return {
         columns,
+        numberOfTasks,
         createColumn
     }
 })
