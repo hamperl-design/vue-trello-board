@@ -1,5 +1,5 @@
 <script lang="ts" setup="">
-import {ref} from "vue";
+import {nextTick, ref} from "vue";
 import type {Column, Task} from "@/types";
 import {nanoid} from "nanoid";
 import TrelloBoardTask from "@/modules/board/views/components/TrelloBoardTask.vue";
@@ -36,10 +36,23 @@ const columns = ref<Column[]>([
     {id: nanoid(), title: 'Deployed', tasks: []},
 ])
 const alt = useKeyModifier('Control')
+const createColumn = () => {
+    const column: Column = {
+        id: nanoid(),
+        title: '',
+        tasks: []
+    }
+
+    columns.value.push(column)
+    nextTick(() => {
+        (document.querySelector('.__column:last-of-type .title-input') as HTMLInputElement).focus()
+    })
+}
 </script>
 
 <template>
-      <draggable
+    <div class="board-wrapper">
+    <draggable
         v-model="columns"
         group="columns"
         item-key="id"
@@ -51,7 +64,13 @@ const alt = useKeyModifier('Control')
               <div class="__column">
                   <header class="__header">
                       <DragHandle />
-                      {{ column.title }}
+                      <input
+                          class="__column-input title-input"
+                          @keyup.enter="($event.target as HTMLInputElement).blur()"
+                          @keydown.backspace="column.title === '' ? (columns = columns.filter(c => c.id !== column.id)) : null"
+                          type="text"
+                          v-model="column.title"
+                      />
                   </header>
                   <draggable
                       v-model="column.tasks"
@@ -75,36 +94,61 @@ const alt = useKeyModifier('Control')
               </div>
           </template>
       </draggable>
+    <button
+        @click="createColumn"
+        class="__create-column"
+        >+ Add Another Column</button>
+    </div>
 </template>
 
 <style lang='scss'>
+.board-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    overflow-x: auto;
+    .board {
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        gap: 1rem;
 
-.board {
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  gap: 1rem;
-  overflow-x: auto;
-  .__column {
-    background-color: #3f3f3f;
-    padding: 1rem;
-    border-radius: 4px;
-    min-width: 250px;
-      &:hover {
-          background-color: #646464;
-      }
-    .__header {
-      font-weight: bold;
-      margin-bottom: 12px;
+        .__column {
+            background-color: #3f3f3f;
+            padding: 1rem;
+            border-radius: 4px;
+            min-width: 250px;
+
+            &:hover {
+                background-color: #646464;
+            }
+
+            .__header {
+                font-weight: bold;
+                margin-bottom: 12px;
+
+                .__column-input {
+                    background: transparent;
+                    max-width: 190px;
+                    border: none;
+                    border-radius: 4px;
+                    color: #aaaaaa;
+
+                    &:focus {
+                        background: #ffffff;
+                        color: #4d31b0;
+                        outline: none;
+                    }
+                }
+            }
+        }
     }
-    .__add-button {
-      color: #aaaaaa;
-      border: none;
-      background-color: transparent;
-      &:hover {
-        color: #4d31b0;
-      }
+
+    .__create-column {
+        background: #3f3f3f;
+        border: none;
+        padding: 5px;
+        opacity: 0.5;
     }
-  }
 }
 </style>

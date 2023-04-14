@@ -31,7 +31,7 @@ onKeyStroke("Backspace", (e: Event) => {
   padding: 4px 12px;
   margin-bottom: 0.5rem;
   border-radius: 4px;
-  box-shadow: 0 0 2px #00000044;
+  //box-shadow: 0 0 2px #00000044;
   max-width: 250px;
   display: flex;
   &:focus,
@@ -39,9 +39,7 @@ onKeyStroke("Backspace", (e: Event) => {
     outline: #4d31b0 auto 1px;
   }
 }
-.sortable-drag .task {
-  transform: rotate(5deg);
-}
+
 .sortable-ghost .task {
   position: relative;
   top: 0;
