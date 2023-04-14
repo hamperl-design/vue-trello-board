@@ -1,13 +1,24 @@
 <script lang="ts" setup="">
-import type {Task} from "@/types";
+import type {Task, ID} from "@/types";
 import DragHandle from "@/modules/board/views/components/DragHandle.vue";
-defineProps<{
+import {ref} from "vue";
+import {onKeyStroke} from "@vueuse/core";
+const props = defineProps<{
     task: Task
 }>()
+const emit = defineEmits<{
+    (e: 'delete', payload: ID): void
+}>()
+
+const focused = ref<boolean>(false)
+onKeyStroke("Backspace", (e: Event) => {
+    if (focused.value) emit('delete',  props.task.id)
+})
 </script>
 
 <template>
-  <div class="task" :title="task.createdAt.toLocaleDateString()">
+  <div class="task" :title="task.createdAt.toLocaleDateString()" @focus="focused = true"
+       @blur="focused = false" tabindex="0">
       <DragHandle />
       <span>{{task.title}}</span>
   </div>
@@ -22,6 +33,11 @@ defineProps<{
   border-radius: 4px;
   box-shadow: 0 0 2px #00000044;
   max-width: 250px;
+  display: flex;
+  &:focus,
+  &:focus-visible {
+    outline: #4d31b0 auto 1px;
+  }
 }
 .sortable-drag .task {
   transform: rotate(5deg);

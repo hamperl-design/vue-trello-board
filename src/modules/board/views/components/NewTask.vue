@@ -24,9 +24,10 @@ const createTask = (e: Event) => {
 </script>
 
 <template>
-    <div>
+    <div class="add-task">
         <textarea
             v-model="title"
+            class="__add-task-field"
             @keydown.tab="createTask"
             @keydown.enter="createTask"
             style="outline: none !important;"
@@ -37,4 +38,18 @@ const createTask = (e: Event) => {
     </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.add-task {
+    .__add-task-field {
+        width: 100%;
+        color: #666666;
+        border: none;
+        background-color: transparent;
+        &:focus {
+            background-color: #FFFFFF;
+            box-shadow: 2px 2px 4px #00000022;
+            height: 4rem
+        }
+    }
+}
+</style>

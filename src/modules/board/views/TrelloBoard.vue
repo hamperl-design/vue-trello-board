@@ -6,6 +6,7 @@ import TrelloBoardTask from "@/modules/board/views/components/TrelloBoardTask.vu
 import draggable from "vuedraggable";
 import DragHandle from "@/modules/board/views/components/DragHandle.vue";
 import {useKeyModifier} from "@vueuse/core";
+import NewTask from "@/modules/board/views/components/NewTask.vue";
 
 const columns = ref<Column[]>([
     {
@@ -63,12 +64,13 @@ const alt = useKeyModifier('Control')
                           <div>
                           <TrelloBoardTask
                               :task="task"
+                              @delete="column.tasks = column.tasks.filter(t => t.id !== $event)"
                           />
                           </div>
                       </template>
                   </draggable>
                   <footer>
-                      <button class="__add-button">+ Add a Card</button>
+                      <NewTask @add="column.tasks.push($event)" />
                   </footer>
               </div>
           </template>
