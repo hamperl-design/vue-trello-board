@@ -4,6 +4,7 @@ import type {Column} from "@/types";
 import {nanoid} from "nanoid";
 
 export const useBoardStore = defineStore('boardStore', () => {
+    const boardLoader = ref<boolean>(true)
     const columns = ref<Column[]>([])
     const numberOfTasks = computed<number>(() => {
         return columns.value.reduce((prev, cur) => {
@@ -24,7 +25,9 @@ export const useBoardStore = defineStore('boardStore', () => {
         })
     }
 
+
     return {
+        boardLoader,
         columns,
         numberOfTasks,
         createColumn
