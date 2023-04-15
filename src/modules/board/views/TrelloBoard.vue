@@ -1,47 +1,28 @@
 <script lang="ts" setup="">
-import {nextTick} from "vue";
-import type {Column, Task} from "@/types";
-import {nanoid} from "nanoid";
 import TrelloBoardTask from "@/modules/board/views/components/TrelloBoardTask.vue";
 import draggable from "vuedraggable";
 import DragHandle from "@/modules/board/views/components/DragHandle.vue";
 import {useKeyModifier, useLocalStorage} from "@vueuse/core";
 import NewTask from "@/modules/board/views/components/NewTask.vue";
 import {useBoardStore} from "@/modules/board/infrastructure/store/board.store";
+import {onBeforeMount, onMounted} from "vue";
+import {useBoardService} from "@/modules/board/application/board.service";
 
-// const columns = useLocalStorage<Column[]>('trelloBoard', [
-//     {
-//         id: nanoid(),
-//         title: 'Backlog',
-//         tasks: [
-//             {
-//                id: nanoid(),
-//                title: 'First task',
-//                createdAt: new Date()
-//             },
-//             {
-//                 id: nanoid(),
-//                 title: 'Second task',
-//                 createdAt: new Date()
-//             },
-//             {
-//                 id: nanoid(),
-//                 title: 'Third task',
-//                 createdAt: new Date()
-//             }
-//         ]
-//     },
-//     {id: nanoid(), title: 'ToDo', tasks: []},
-//     {id: nanoid(), title: 'In Progress', tasks: []},
-//     {id: nanoid(), title: 'Done', tasks: []},
-//     {id: nanoid(), title: 'Deployed', tasks: []},
-// ])
 const alt = useKeyModifier('Control')
 const boardStore = useBoardStore()
+const {boardLoader} = useBoardService()
+
+onBeforeMount(async () => {
+    await boardLoader()
+})
+
+// onMounted(async () => {
+//     await boardLoader()
+// })
 </script>
 
 <template>
-    <div class="board-wrapper">
+    <div class="board-wrapper" v-if="boardStore.columns.length > 0">
     <draggable
         v-model="boardStore.columns"
         group="columns"
